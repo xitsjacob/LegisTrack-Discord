@@ -13,17 +13,28 @@ class LegislativeTracker():
     def __init__(self):
         self.time_format = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
 
+    async def current_congress(self):
+        congress_num = requests.get(f'https://api.congress.gov/v3/congress?limit=1&api_key={os.getenv("CONGRESS_API_KEY")}') 
+        print(congress_num.status_code)
+        congress_json = congress_num.json() if congress_num and congress_num.status_code == 200 else None
+
+        unfilitered_name = congress_json['congresses'][0]['name']
+        congress_name = ''.join(c for c in unfilitered_name if c.isdigit())
+        
+        return congress_name
 
     async def latest_update(self):
-        
-        updated_bills = requests.get(f'https://api.congress.gov/v3/bill?fromDateTime={past_time}&toDateTime={self.time_format}&sort=updateDate+desc&api_key={os.getenv("CONGRESS_API_KEY")}')
+        current_congress = await self.current_congress()
+        updated_bills = requests.get(f'https://api.congress.gov/v3/bill/{current_congress}?fromDateTime={past_time}&toDateTime={self.time_format}&sort=updateDate+desc&api_key={os.getenv("CONGRESS_API_KEY")}')
+
 
         print(updated_bills.json())
-        return self.time_format
+        return
 
 trackers = LegislativeTracker()
 
 asyncio.run(trackers.latest_update())
+# asyncio.run(trackers.current_congress())
 
 
 # updated_bills = requests.get(f'https://api.congress.gov/v3/bill?fromDateTime=2024-01-07T00%3A00%3A00Z&toDateTime=2024-02-07T00%3A00%3A00Z&sort=updateDate+desc&api_key={os.getenv("CONGRESS_API_KEY")}')
