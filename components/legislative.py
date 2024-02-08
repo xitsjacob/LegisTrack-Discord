@@ -26,12 +26,36 @@ class LegislativeTracker():
     async def latest_update(self): # Data will be contained in a matrix, and all the data matrixis will be contained in its own matrix
 
         current_congress = await self.current_congress()
-        updated_bills = requests.get(f'https://api.congress.gov/v3/bill/{current_congress}?fromDateTime={past_time}&toDateTime={self.time_format}&sort=updateDate+desc&api_key={os.getenv("CONGRESS_API_KEY")}')
+
+        #placeholders
+        fromTime = '2024-01-07T00%3A00%3A00Z'
+        toDate = '2024-02-07T00%3A00%3A00Z'
+
+        updated_bills = requests.get(f'https://api.congress.gov/v3/bill/{current_congress}?fromDateTime={fromTime}&toDateTime={toDate}&sort=updateDate+desc&api_key={os.getenv("CONGRESS_API_KEY")}')
+        bills = updated_bills.json()
 
         # Data will go through a for loop, and once confirmed it actually updated. Data will be sent into a matrix. 
         # Following the completion of this for loop the data will be sent back and will begin embeding.
 
-        print(updated_bills.json())
+        # Returns error, fixing later
+        if 'bill' in bills:
+            bills_data = bills['bills']
+            for bill in bills_data:
+                type = bill['type']
+                number = bill['number']
+                title = bill['title']
+                updateDate = bill['updateDateIncludingText']
+                text = bill['latestAction']['text']
+
+        try:
+            print(f'type: {type}')
+            print(f'number: {number}')
+            print(f'title: {title}')
+            print(f'updateDate: {updateDate}')
+            print(f'text: {text}')
+        except:
+            print("error")
+
         return
 
 trackers = LegislativeTracker()
