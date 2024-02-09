@@ -1,5 +1,4 @@
 import asyncio
-import json
 import requests
 import time
 import os
@@ -27,17 +26,13 @@ class LegislativeTracker():
 
         current_congress = await self.current_congress()
 
-        #placeholders
+        # Placeholders
         fromTime = '2024-01-07T00%3A00%3A00Z'
         toDate = '2024-02-07T00%3A00%3A00Z'
 
         updated_bills = requests.get(f'https://api.congress.gov/v3/bill/{current_congress}?fromDateTime={fromTime}&toDateTime={toDate}&sort=updateDate+desc&api_key={os.getenv("CONGRESS_API_KEY")}')
         bills_response = updated_bills.json()
 
-        # Data will go through a for loop, and once confirmed it actually updated. Data will be sent into a matrix. 
-        # Following the completion of this for loop the data will be sent back and will begin embeding.
-
-        # Returns error, fixing later
         if 'bills' in bills_response:
             bills_data = bills_response['bills']
             if len(bills_data) > 0:  
@@ -66,7 +61,3 @@ class LegislativeTracker():
 trackers = LegislativeTracker()
 
 asyncio.run(trackers.latest_update())
-# asyncio.run(trackers.current_congress())
-
-
-# updated_bills = requests.get(f'https://api.congress.gov/v3/bill?fromDateTime=2024-01-07T00%3A00%3A00Z&toDateTime=2024-02-07T00%3A00%3A00Z&sort=updateDate+desc&api_key={os.getenv("CONGRESS_API_KEY")}')
