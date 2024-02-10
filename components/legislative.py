@@ -3,6 +3,8 @@ import requests
 import time
 import os
 from dotenv import load_dotenv
+
+
 load_dotenv("./.env")
 
 past_time = '2024-02-07T03:58:00Z'
@@ -30,11 +32,10 @@ class LegislativeTracker():
         current_congress = await self.current_congress()
 
         # Placeholders
-        fromTime = '2024-01-07T00%3A00%3A00Z'
-        toDate = '2024-02-07T00%3A00%3A00Z'
+        billLimit = 10
 
         updated_bills = requests.get(
-            f'https://api.congress.gov/v3/bill/{current_congress}?fromDateTime={fromTime}&toDateTime={toDate}&sort=updateDate+desc&api_key={os.getenv("CONGRESS_API_KEY")}')
+            f'https://api.congress.gov/v3/bill/{current_congress}?limit={billLimit}&sort=updateDate+desc&api_key={os.getenv("CONGRESS_API_KEY")}')
         bills_response = updated_bills.json()
 
         if 'bills' in bills_response:
@@ -45,24 +46,19 @@ class LegislativeTracker():
                     type = bill['type']
                     number = bill['number']
                     title = bill['title']
-                    updateDate = bill['updateDateIncludingText']
                     text = bill['latestAction']['text']
 
-                    filtered_data.append([
-                        ['type', type],
-                        ['number', number],
-                        ['title', title],
-                        ['updateDate', updateDate],
-                        ['text', text]
-                    ])
+                    filtered_data.append(
+                        [type, number, title, text],
+                    )
 
-                print(filtered_data)
+                return filtered_data
             else:
-                print(f"No bills: {self.time_format}")
+                return None
         else:
             print('No bill key found. Potential error.')
 
 
 trackers = LegislativeTracker()
 
-asyncio.run(trackers.latest_update())
+# asyncio.run(trackers.latest_update())
