@@ -14,6 +14,7 @@ client = commands.Bot(command_prefix="!", intents=intents.all())
 
 @client.event
 async def on_ready():
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="Congress"))
     print(f'We have logged in as {client.user}')
 
 async def load():
