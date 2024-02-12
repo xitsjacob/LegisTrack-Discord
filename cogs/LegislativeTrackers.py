@@ -17,16 +17,17 @@ load_dotenv("./.env")
 class LegislativeTrackers(commands.Cog):
     def __init__(self, client):
         self.client = client
+        self.tracker = CongressAPI()
+        self.dev_id = int(os.getenv("DEV_USER_ID"))
 
     @commands.Cog.listener()
     async def on_ready(self):
         print('Trackers are ready')
 
     @commands.command()
-    async def leg(self, ctx):
+    async def getbills(self, ctx):
         try:
-            tracker = CongressAPI()
-            recent_bills = await tracker.latest_update()
+            recent_bills = await self.tracker.latest_update()
 
             # type [0], number [1], title [2], text [3]
 
@@ -47,9 +48,7 @@ class LegislativeTrackers(commands.Cog):
             
             await ctx.send(embed=legislativeUpdate)
         except Exception as e:
-            dev_id = int(os.getenv("DEV_USER_ID"))
-            await ctx.send(f"<@{dev_id}> Error: {e}")
-
+            await ctx.send(f"<@{self.dev_id}> Error: {e}")
 
 async def setup(client):
     await client.add_cog(LegislativeTrackers(client))
