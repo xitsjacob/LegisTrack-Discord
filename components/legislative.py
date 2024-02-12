@@ -10,7 +10,7 @@ load_dotenv("./.env")
 past_time = '2024-02-07T03:58:00Z'
 
 
-class LegislativeTracker():
+class CongressAPI():
     def __init__(self):
         self.time_format = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
 
@@ -56,8 +56,3 @@ class LegislativeTracker():
                 return None
         else:
             print('No bill key found. Potential error.')
-
-
-trackers = LegislativeTracker()
-
-# asyncio.run(trackers.latest_update())

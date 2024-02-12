@@ -2,7 +2,7 @@ import asyncio
 import discord
 import requests
 import os
-from components.legislative import LegislativeTracker
+from components.legislative import CongressAPI
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -25,7 +25,7 @@ class LegislativeTrackers(commands.Cog):
     @commands.command()
     async def leg(self, ctx):
         try:
-            tracker = LegislativeTracker()
+            tracker = CongressAPI()
             recent_bills = await tracker.latest_update()
 
             # type [0], number [1], title [2], text [3]
@@ -52,4 +52,4 @@ class LegislativeTrackers(commands.Cog):
 
 
 async def setup(client):
-    await client.add_cog(LegislativeTracker(client))
+    await client.add_cog(LegislativeTrackers(client))
