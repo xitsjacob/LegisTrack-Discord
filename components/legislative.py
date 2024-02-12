@@ -17,7 +17,6 @@ class LegislativeTracker():
     async def current_congress(self):
         congress_num = requests.get(
             f'https://api.congress.gov/v3/congress?limit=1&api_key={os.getenv("CONGRESS_API_KEY")}')
-        print(congress_num.status_code)
         congress_json = congress_num.json(
         ) if congress_num and congress_num.status_code == 200 else None
 
